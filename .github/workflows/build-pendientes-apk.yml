@@ -1,0 +1,59 @@
+name: Build Pendientes IA APK
+
+on:
+  push:
+    branches: [ "pendientes-ia-build" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Rebuild source archive
+        shell: bash
+        run: |
+          cat android-build/c1.txt android-build/c2.txt android-build/c3.txt android-build/c4.txt android-build/c5.txt android-build/c6.txt android-build/c7.txt android-build/c8.txt android-build/c9.txt | base64 -d > pendientes-source.zip
+          unzip -t pendientes-source.zip
+          unzip -q pendientes-source.zip
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK packages
+        shell: bash
+        run: yes | sdkmanager "platforms;android-36" "build-tools;36.0.0"
+
+      - name: Set up Gradle 9.6
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.6.0'
+
+      - name: Build debug APK
+        working-directory: PendientesIA_Android
+        run: gradle --no-daemon assembleDebug
+
+      - name: Verify APK
+        shell: bash
+        run: |
+          test -f PendientesIA_Android/app/build/outputs/apk/debug/app-debug.apk
+          ls -lh PendientesIA_Android/app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Pendientes-IA-Android
+          path: PendientesIA_Android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 30
