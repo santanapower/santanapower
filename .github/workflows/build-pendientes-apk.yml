@@ -18,7 +18,7 @@ jobs:
       - name: Rebuild source archive
         shell: bash
         run: |
-          cat android-build/v2_1.txt android-build/v2_2.txt android-build/v2_3.txt android-build/v2_4.txt | base64 -d > pendientes-source.zip
+          cat android-build/v3_1.txt | base64 -d > pendientes-source.zip
           unzip -t pendientes-source.zip
           unzip -q pendientes-source.zip
 
@@ -54,17 +54,7 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Pendientes-IA-Android-v2
+          name: Pendientes-IA-Android-v1.2
           path: PendientesIA_Android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 30
-
-      - name: Upload APK signing tool
-        uses: actions/upload-artifact@v4
-        with:
-          name: Android-ApkSigner
-          path: |
-            /usr/local/lib/android/sdk/build-tools/36.0.0/apksigner
-            /usr/local/lib/android/sdk/build-tools/36.0.0/lib/apksigner.jar
-          if-no-files-found: error
-          retention-days: 1
