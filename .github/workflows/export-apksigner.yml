@@ -1,0 +1,33 @@
+name: Export Android ApkSigner
+
+on:
+  push:
+    branches: [ "pendientes-ia-build" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Android build tools
+        shell: bash
+        run: |
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$SDKMANAGER" --licenses >/dev/null || true
+          "$SDKMANAGER" "build-tools;36.0.0"
+      - name: Copy ApkSigner
+        shell: bash
+        run: |
+          mkdir -p signer/lib
+          cp "$ANDROID_HOME/build-tools/36.0.0/apksigner" signer/
+          cp "$ANDROID_HOME/build-tools/36.0.0/lib/apksigner.jar" signer/lib/
+          ls -l signer signer/lib
+      - name: Upload ApkSigner
+        uses: actions/upload-artifact@v4
+        with:
+          name: Android-ApkSigner-Standalone
+          path: signer
+          retention-days: 1
