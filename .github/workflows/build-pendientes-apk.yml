@@ -18,7 +18,7 @@ jobs:
       - name: Rebuild source archive
         shell: bash
         run: |
-          cat android-build/v3_1.txt | base64 -d > pendientes-source.zip
+          cat android-build/v3a_1.txt android-build/v3a_2.txt android-build/v3a_3.txt android-build/v3a_4.txt | base64 -d > pendientes-source.zip
           unzip -t pendientes-source.zip
           unzip -q pendientes-source.zip
 
