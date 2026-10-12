@@ -18,7 +18,7 @@ jobs:
       - name: Rebuild source archive
         shell: bash
         run: |
-          cat android-build/v3a_1.txt android-build/v3a_2.txt android-build/v3a_3.txt android-build/v3a_4.txt | base64 -d > pendientes-source.zip
+          cat android-build/v3f_1.txt android-build/v3f_2.txt android-build/v3f_3a.txt android-build/v3f_3b.txt android-build/v3f_4a.txt android-build/v3f_4b.txt | base64 -d > pendientes-source.zip
           unzip -t pendientes-source.zip
           unzip -q pendientes-source.zip
 
@@ -41,20 +41,20 @@ jobs:
         with:
           gradle-version: '9.6.0'
 
-      - name: Build debug APK
+      - name: Build unsigned release APK
         working-directory: PendientesIA_Android
-        run: gradle --no-daemon assembleDebug
+        run: gradle --no-daemon assembleRelease
 
-      - name: Verify APK
+      - name: Verify APK exists
         shell: bash
         run: |
-          test -f PendientesIA_Android/app/build/outputs/apk/debug/app-debug.apk
-          ls -lh PendientesIA_Android/app/build/outputs/apk/debug/app-debug.apk
+          test -f PendientesIA_Android/app/build/outputs/apk/release/app-release-unsigned.apk
+          ls -lh PendientesIA_Android/app/build/outputs/apk/release/app-release-unsigned.apk
 
-      - name: Upload APK
+      - name: Upload unsigned APK
         uses: actions/upload-artifact@v4
         with:
-          name: Pendientes-IA-Android-v1.2
-          path: PendientesIA_Android/app/build/outputs/apk/debug/app-debug.apk
+          name: Pendientes-IA-Android-v1.2-unsigned
+          path: PendientesIA_Android/app/build/outputs/apk/release/app-release-unsigned.apk
           if-no-files-found: error
           retention-days: 30
