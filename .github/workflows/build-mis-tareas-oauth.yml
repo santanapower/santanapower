@@ -1,0 +1,63 @@
+name: Build Mis tareas 2.2 OAuth APK
+
+on:
+  push:
+    branches: [ "pendientes-ia-build" ]
+    paths:
+      - "android-build/mt22y-trigger.txt"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Rebuild source archive
+        shell: bash
+        run: |
+          cat android-build/mt22y_00.txt android-build/mt22y_01.txt android-build/mt22y_02.txt android-build/mt22y_03.txt android-build/mt22y_04.txt android-build/mt22y_05.txt android-build/mt22y_06.txt android-build/mt22y_07.txt | base64 -d > mis-tareas-2.2-source.zip
+          echo "6171ca527e70a130c4ec58a5497c72926d1de0de499dff53de90724ee43fc94a  mis-tareas-2.2-source.zip" | sha256sum -c -
+          unzip -t mis-tareas-2.2-source.zip
+          unzip -q mis-tareas-2.2-source.zip
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install Android SDK packages
+        shell: bash
+        run: |
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          test -x "$SDKMANAGER"
+          yes | "$SDKMANAGER" --licenses >/dev/null || true
+          "$SDKMANAGER" "platform-tools" "platforms;android-36" "build-tools;36.0.0"
+
+      - name: Set up Gradle 9.6
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.6.0'
+
+      - name: Build unsigned release APK
+        working-directory: pendientes_v20_build
+        run: gradle --no-daemon assembleRelease
+
+      - name: Verify APK exists
+        shell: bash
+        run: |
+          test -f pendientes_v20_build/app/build/outputs/apk/release/app-release-unsigned.apk
+          ls -lh pendientes_v20_build/app/build/outputs/apk/release/app-release-unsigned.apk
+
+      - name: Upload unsigned APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mis-tareas-2.2-OAuth-unsigned
+          path: pendientes_v20_build/app/build/outputs/apk/release/app-release-unsigned.apk
+          if-no-files-found: error
+          retention-days: 30
