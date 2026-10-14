@@ -25,6 +25,14 @@ jobs:
           unzip -t mis-tareas-2.2-source.zip
           unzip -q mis-tareas-2.2-source.zip
 
+      - name: Prepare permanent Mis tareas package
+        shell: bash
+        run: |
+          sed -i "s/applicationId 'com.elo.pendientesia2'/applicationId 'com.elo.mistareas'/" pendientes_v20_build/app/build.gradle
+          sed -i 's/setContentTitle("Pendientes IA")/setContentTitle("Mis tareas")/' pendientes_v20_build/app/src/main/java/com/elo/pendientesia/ReminderReceiver.java
+          grep -n "applicationId\|versionCode\|versionName" pendientes_v20_build/app/build.gradle
+          grep -n "setContentTitle" pendientes_v20_build/app/src/main/java/com/elo/pendientesia/ReminderReceiver.java
+
       - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
