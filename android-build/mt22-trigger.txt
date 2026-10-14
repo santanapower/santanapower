@@ -1,1 +1,1 @@
-build Mis tareas 2.2 retry - verified split chunks
+build Mis tareas 2.2 final side-by-side package
