@@ -20,7 +20,7 @@ jobs:
       - name: Rebuild source archive
         shell: bash
         run: |
-          cat android-build/mt22_00.txt android-build/mt22_01.txt android-build/mt22_02.txt android-build/mt22_03.txt android-build/mt22_04.txt android-build/mt22_05.txt android-build/mt22_06.txt android-build/mt22_07.txt android-build/mt22_08.txt android-build/mt22_09.txt | base64 -d > mis-tareas-2.2-source.zip
+          cat android-build/mt22_00.txt android-build/mt22_01.txt android-build/mt22_02.txt android-build/mt22_03.txt android-build/mt22_04a.txt android-build/mt22_04b.txt android-build/mt22_05a.txt android-build/mt22_05b.txt android-build/mt22_06.txt android-build/mt22_07.txt android-build/mt22_08.txt android-build/mt22_09.txt | base64 -d > mis-tareas-2.2-source.zip
           echo "c4d740788501463123af2fe9981b45be261924f6b9be3d8d66e48e4288782f93  mis-tareas-2.2-source.zip" | sha256sum -c -
           unzip -t mis-tareas-2.2-source.zip
           unzip -q mis-tareas-2.2-source.zip
